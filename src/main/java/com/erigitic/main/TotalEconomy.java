@@ -37,6 +37,7 @@ import com.erigitic.config.AccountManager;
 import com.erigitic.config.TECurrency;
 import com.erigitic.config.TECurrencyRegistryModule;
 import com.erigitic.jobs.JobManager;
+import com.erigitic.jobs.actions.ActionFactory;
 import com.erigitic.shops.PlayerShopInfo;
 import com.erigitic.shops.Shop;
 import com.erigitic.shops.ShopItem;
@@ -151,6 +152,7 @@ public class TotalEconomy {
     @Listener
     public void preInit(GamePreInitializationEvent event) {
         totalEconomy = this;
+        ActionFactory.setPlugin(this);
 
         loadConfig();
         loadCurrencies();
@@ -362,6 +364,7 @@ public class TotalEconomy {
 
         if (jobFeatureEnabled) {
             eventManager.registerListeners(this, jobManager);
+            jobManager.registerListers();
         }
 
         if (chestShopEnabled) {

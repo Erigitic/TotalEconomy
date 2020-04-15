@@ -26,18 +26,10 @@
 package com.erigitic.commands;
 
 import com.erigitic.jobs.JobBasedRequirement;
-import com.erigitic.jobs.TEAction;
 import com.erigitic.jobs.TEActionReward;
 import com.erigitic.jobs.TEJob;
 import com.erigitic.jobs.TEJobSet;
 import com.erigitic.main.TotalEconomy;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
@@ -53,6 +45,9 @@ import org.spongepowered.api.service.pagination.PaginationList;
 import org.spongepowered.api.service.pagination.PaginationService;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
+
+import java.math.BigDecimal;
+import java.util.*;
 
 public class JobCommand implements CommandExecutor {
 
@@ -210,36 +205,8 @@ public class JobCommand implements CommandExecutor {
                 if (optSet.isPresent()) {
                     TEJobSet jobSet = optSet.get();
 
-                    for (TEAction action : jobSet.getActions()) {
-                        Text listText;
-
-                        if (action.isIdTraited()) {
-                            // MC does not support '\t'
-                            String tab = new String(new char[action.getAction().length() + 2]).replace("\0", " ");
-                            List<Text> texts = new ArrayList<>(action.getRewards().size());
-
-                            action.getRewards().forEach((k, v) -> {
-                                Text metaText = Text.of("");
-
-                                if (action.isGrowing() && extended) {
-                                    metaText = Text.of(",growing=1");
-                                }
-
-                                Text rewardText = Text.of("\n", tab, TextColors.GRAY, "{", action.getIdTrait(), '=', k, metaText, "} ", TextColors.GOLD, formatReward(v));
-                                texts.add(rewardText);
-                            });
-
-                            listText = Text.join(texts.toArray(new Text[texts.size()]));
-                        } else {
-                            listText = Text.of(" ", formatReward(action.getReward().get()));
-
-                            if (action.isGrowing() && extended) {
-                                listText = Text.of(TextColors.GRAY, "{growing=1}", TextColors.GOLD,  listText);
-                            }
-                        }
-
-                        lines.add(Text.of(TextColors.GOLD, "[", TotalEconomy.getTotalEconomy().getJobManager().titleize(action.getAction()), "] ", TextColors.GRAY, action.getTargetId(), TextColors.GOLD, listText));
-                    }
+                    Text listText = Text.joinWith(Text.of("\n"), jobSet.getActionListAsText());
+                    lines.add(listText);
                 }
             }
 
